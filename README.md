@@ -1,5 +1,7 @@
 # Template Editor for Craft CMS (Alpha)
 
+Editor is a web based template editor for craft CMS.
+
 Please use this at your own risk, is it works at file system level, I cannot
 guarentee that you will not loose template files. Please backup your templates
 before use.
