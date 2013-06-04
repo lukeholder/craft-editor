@@ -7,42 +7,12 @@ define( "FILE_PUT_CONTENTS_ATOMIC_MODE", 0777 );
 
 
 Craft::requirePackage( CraftPackage::Users );
-/**
- * Ingredients Controller
- *
- * Defines actions which can be posted to by forms in our templates.
- */
+
 class Editor_EditController extends BaseController
 {
   protected $allowAnonymous = true;
-  /**
-   * Load Editor
-   *
-   */
-  // public function beforeAction(){
-  //   return true;
-  // }
 
   public function actionTemplates() {
-
-    // $group         = new UserGroupModel();
-    // $group->name   = "Paid Subscribers";
-    // $group->handle = "paidSubscribers";
-
-    // // Did it save?
-    // if ( craft()->userGroups->saveGroup( $group ) ) {
-    //   // Save the new permissions
-    //   $permissions = array();
-    //   craft()->userPermissions->saveGroupPermissions( $group->id, $permissions );
-    // } else {
-    //   die( "bad" );
-    // }
-
-    // Send the group back to the template
-    // craft()->urlManager->setRouteVariables( array(
-    //     'group' => $group
-    //   ) );
-
 
     $this->requireLogin();
     $file_path = $this->cleanPath( craft()->request->getQuery( "f", "error" ) );
