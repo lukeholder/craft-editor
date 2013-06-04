@@ -6,3 +6,12 @@ before use.
 
 I reserve the right to release this a paid plugin when the features and quality
 improve.
+
+# Installation
+
+Place editor folder found here within the plugins/ folder to your craft/plugins
+folder.
+
+# Other
+
+Copyright 2013 Luke Holder
