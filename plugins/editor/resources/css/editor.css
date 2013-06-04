@@ -1,0 +1,42 @@
+html {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    }
+    body {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: Arial, Helvetica, sans-serif, Tahoma, Verdana, sans-serif;
+    font-size: 12px;
+    }
+    
+    #editor { 
+      position: absolute;
+      top:  0px;
+      left: 280px;
+      bottom: 0px;
+      right: 0px;
+      margin: 0;
+      padding: 0;
+      background: white;
+    }
+    #editor-sidebar{
+      position:absolute;
+      height:100%;
+      width:260px;
+      overflow: scroll;
+    }
+    .ui-pnotify-history-container{
+      display:none;
+    }
+    .buttons-sidebar{
+      margin:10px;
+    }
+#spinner-container{
+  position: absolute;
+  top:20px;
+  right:20px;
+}
