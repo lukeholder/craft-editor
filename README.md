@@ -9,7 +9,7 @@ before use.
 I reserve the right to release this a paid plugin when the features and quality
 improve.
 
-![Screenshot](http://d.pr/i/fLEQ+ "Editor Screenshot")
+![Screenshot](http://d.pr/i/26TW+ "Editor Screenshot")
 
 # Features
 
