@@ -2,6 +2,9 @@
 
 Editor is a web based template editor for craft CMS.
 
+Download [editor.zip here](https://github.com/lukeholder/craft-editor/releases/tag/1.0) on the releases page.
+Only download the repo if you are a developer and know how to use composer.
+
 Please use this at your own risk, is it works at file system level, I cannot
 guarentee that you will not lose template files. Please backup your templates
 before use.
