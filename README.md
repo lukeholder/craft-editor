@@ -9,6 +9,8 @@ before use.
 I reserve the right to release this a paid plugin when the features and quality
 improve.
 
+![Screenshot](http://d.pr/i/fLEQ+ "Editor Screenshot")
+
 # Features
 
 * Uses the very powerful ACE editor.
