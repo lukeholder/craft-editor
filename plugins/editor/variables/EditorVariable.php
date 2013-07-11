@@ -7,15 +7,6 @@ namespace Craft;
  */
 class EditorVariable
 {
-    /**
-     * Get all available ingredients
-     *
-     * @return array
-     */
-    public function templates(){
-          return $this->listIn(craft()->path->getTemplatesPath());
-    }
-
     public function templateLink(){
       if (isset($_GET['template']))
       {
@@ -35,20 +26,25 @@ class EditorVariable
       }
     }
 
-    private function listIn($dir, $prefix = '') {
+    public function tree (){
+      return json_encode($this->makeTree(craft()->path->getTemplatesPath()));
+    }
+
+    private function makeTree ($dir, $prefix = ''){
       $dir = rtrim($dir, '\\/');
+      $siteUrl = craft::getSiteUrl();
+      $actionUrl = craft()->config->get("actionTrigger");
       $result = array();
 
-        foreach (scandir($dir) as $f) {
-          if ($f !== '.' and $f !== '..' and $f !== '.DS_Store') {
-            if (is_dir("$dir/$f")) {
-              $result = array_merge($result, $this->ListIn("$dir/$f", "$prefix$f/"));
-            } else {
-              $result[] = $prefix.$f;
-            }
+      foreach (scandir($dir) as $f) {
+        if ($f !== '.' and $f !== '..' and $f !== '.DS_Store') {
+          if (is_dir("$dir/$f")) {
+            $result[] = array("label"=>$f, 'children' => array_merge($result, $this->makeTree("$dir/$f", "$prefix$f/"))); 
+          } else {
+            $result[] = array("label"=>"<a href='$siteUrl/$actionUrl/editor/edit/templates?f=$f'>$f</a>");
           }
         }
-
+      }
       return $result;
     }
 }

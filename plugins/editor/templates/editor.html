@@ -3,13 +3,14 @@
 {%- includeJsResource 'lib/jquery-ui-1.10.0.custom'~(craft.config.useCompressedJs ? '.min' : '')~'.js' %}
 {%- includeJsResource 'lib/jquery-1.9.1'~(craft.config.useCompressedJs ? '.min' : '')~'.js' first %}
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <title>Editor</title>
-  <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+  <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
 
 </head>
 <body>
@@ -23,15 +24,9 @@
 
   </div>
 
-  <ul>
-  {% for f in craft.editor.templates %}
-  <li><a class="template-open" href="http://{{ craft.request.getServerName }}/actions/editor/edit/templates?f={{f}}">{{f}}</a></li>
-  {% endfor %}
-  <br/>
-  </ul>
-  {% for e in craft.lumberjack.getAllLogEntries %}
-    <script>//console.log("{{e.message}}");</script>
-  {% endfor%}
+  <div id="fileTree"></div>
+
+
     <div id="spinner-container">
       <div id="spinner"></div>
     </div>
@@ -45,15 +40,30 @@
   editorSession = {
     file_path: "{{file_path}}"
   };
+
+
+  $(function() {
+      $('#fileTree').tree({
+          data: {{ craft.editor.tree|raw }},
+          saveState: true,
+          selectable: false,
+          autoEscape: false
+      });
+  });
+
 {% endset %}
 {% includeJs js %}
 
 {% includeJsResource "editor/lib/ace/src/ace.js" %} 
 {% includeJsResource "editor/lib/pnotify-1.2.0/jquery.pnotify.min.js" %} 
+{% includeJsResource "editor/lib/jqTree/jqTree.js" %} 
+{% includeJsResource "editor/lib/jqTree/jquery.cookie.js" %} 
 {% includeJsResource "editor/js/spinner.min.js" %} 
 {% includeJsResource "editor/js/editor.js" %}
 {% includeCssResource "editor/css/editor.css" %} 
 {% includeCssResource "editor/lib/pnotify-1.2.0/jquery.pnotify.default.css" %} 
+{% includeCssResource "editor/lib/jqTree/jqTree.css" %} 
+
 
 
 
