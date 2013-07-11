@@ -15,6 +15,8 @@ class Editor_EditController extends BaseController
   public function actionTemplates() {
 
     $this->requireLogin();
+    $this->requireAdmin();
+    
     $file_path = $this->cleanPath( craft()->request->getQuery( "f", "error" ) );
 
     $vars = array(
@@ -29,7 +31,7 @@ class Editor_EditController extends BaseController
   public function actionSaveTemplate() {
     $this->requireLogin();
     $this->requireAjaxRequest();
-
+    $this->requireAdmin();
 
     $contents  = craft()->request->getRequiredPost( "contents" );
     $file_path = craft()->request->getRequiredPost( "file_path" );
