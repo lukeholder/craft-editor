@@ -41,11 +41,10 @@
     file_path: "{{file_path}}"
   };
 
-
   $(function() {
       $('#fileTree').tree({
           data: {{ craft.editor.tree|raw }},
-          saveState: true,
+          saveState: 'editorFileTree',
           selectable: false,
           autoEscape: false
       });

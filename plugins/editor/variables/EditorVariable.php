@@ -39,9 +39,9 @@ class EditorVariable
       foreach (scandir($dir) as $f) {
         if ($f !== '.' and $f !== '..' and $f !== '.DS_Store') {
           if (is_dir("$dir/$f")) {
-            $result[] = array("label"=>$f, 'children' => array_merge($result, $this->makeTree("$dir/$f", "$prefix$f/"))); 
+            $result[] = array("label"=>$f, 'children' => $this->makeTree("$dir/$f", "$prefix$f/")); 
           } else {
-            $result[] = array("label"=>"<a href='$siteUrl/$actionUrl/editor/edit/templates?f=$f'>$f</a>");
+            $result[] = array("label"=>"<a href='$siteUrl/$actionUrl/editor/edit/templates?f=$prefix$f'>$f</a>");
           }
         }
       }
