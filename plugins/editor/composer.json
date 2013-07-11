@@ -4,5 +4,10 @@
             "name": "Luke Holder",
             "email": "lukemh@gmail.com"
         }
-    ]
+    ],
+    "require": {
+        "alchemy/zippy": " ~0.1",
+        "symfony/filesystem"   : "~2.0"
+    }
+
 }

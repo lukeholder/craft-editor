@@ -2,6 +2,8 @@
 
 namespace Craft;
 
+
+
 class EditorPlugin extends BasePlugin
 {
     public function getName()

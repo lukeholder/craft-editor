@@ -39,34 +39,10 @@ window.onbeforeunload = function (evt) {
   }
 }
 
-saveFile = function () {
-  showSpinner();
-  var contents = editor.getSession().getValue();
 
-  var data = {
-    "file_path": editorSession.file_path,
-    "contents": contents
-  };
 
-  $.ajax("/actions/editor/edit/saveTemplate", {
-    type: 'POST',
-    data: data,
-    success: function (r) {
-      editor.getSession().dirty = false;
-      $.pnotify({
-        title: 'Saved',
-        text: 'File Saved.',
-        type: 'success'
-      });
-      stopSpinner();
-    },
-    error: function (r) {
-      alert("error, did not save.");
-      stopSpinner();
-    }
-  });
 
-};
+$(document).ready(function () {
 
 var editor = ace.edit("editor");
 editor.setTheme("ace/theme/monokai");
@@ -93,7 +69,73 @@ function DecodeHtml(str) {
     return $('<div/>').html(str).text();
 }
 
-$(document).ready(function () {
+
+backupTemplates = function(){
+  showSpinner();
+  var url = "/actions/editor/edit/backupTemplates";
+  $.ajax(url, {
+    type: 'POST',
+    data: {},
+    success: function (r) {
+      if (r.error){
+        $.pnotify({
+          title: 'Error',
+          text: r.error,
+          type: 'error'
+        });
+      }else{
+        $.pnotify({
+          title: 'Backup',
+          text: 'zip created in storage/templatesBackups',
+          type: 'success'
+        });
+      }
+      stopSpinner();
+    },
+    error: function (r) {
+      $.pnotify({
+        title: 'Error',
+        text: r,
+        type: 'error'
+      });
+      stopSpinner();
+    }
+  });
+
+};
+
+saveFile = function () {
+  showSpinner();
+  var contents = editor.getSession().getValue();
+
+  var data = {
+    "file_path": editorSession.file_path,
+    "contents": contents
+  };
+
+  $.ajax("/actions/editor/edit/saveTemplate", {
+    type: 'POST',
+    data: data,
+    success: function (r) {
+      editor.getSession().dirty = false;
+      $.pnotify({
+        title: 'Saved',
+        text: 'File Saved.',
+        type: 'success'
+      });
+      stopSpinner();
+    },
+    error: function (r) {
+      $.pnotify({
+        title: 'Error',
+        text: r,
+        type: 'error'
+      });
+      stopSpinner();
+    }
+  });
+
+};
 
   $(".template-open").click(function (e) {
     e.preventDefault();
@@ -111,6 +153,10 @@ $(document).ready(function () {
   $("#editor-save").click(function (e) {
     e.preventDefault();
     saveFile();
+  });
+  $("#editor-backup").click(function (e) {
+    e.preventDefault();
+    backupTemplates();
   });
   $("#editor-undoall").click(function (e) {
     e.preventDefault();

@@ -2,6 +2,11 @@
 
 namespace Craft;
 
+require __DIR__.'/../vendor/autoload.php';
+
+use Alchemy\Zippy\Zippy;
+use Symfony\Component\Filesystem\Filesystem;
+
 define( "FILE_PUT_CONTENTS_ATOMIC_TEMP", dirname( __FILE__ ) . "/../cache" );
 define( "FILE_PUT_CONTENTS_ATOMIC_MODE", 0777 );
 
@@ -25,6 +30,37 @@ class Editor_EditController extends BaseController
     );
 
     $this->renderTemplate( 'Editor/editor', $vars );
+
+  }
+
+  public function actionBackupTemplates() {
+    $this->requireLogin();
+    $this->requireAjaxRequest();
+    $this->requireAdmin();
+    
+    $fs = new Filesystem();
+    $zippy = Zippy::load();
+
+    $templateBackupsDir = CRAFT_STORAGE_PATH.'templatesBackups/';
+    if(!$fs->exists($templateBackupsDir )){
+      $fs->mkdir($templateBackupsDir);
+    };
+
+      try{
+        
+        $archive = $zippy->create($templateBackupsDir.'templateBackup-'.uniqid().'.zip', array(
+            'folder' => CRAFT_TEMPLATES_PATH
+        ), true);
+
+        $vars = array(
+            "success" => true,
+        );
+
+        $this->returnJson( $vars );
+      }catch(Exception $e){
+        $this->returnErrorJson( $e );
+      }
+
 
   }
 
@@ -65,8 +101,7 @@ class Editor_EditController extends BaseController
 
     $basedir  = craft()->path->getTemplatesPath();
     $filePath = realpath( $basedir . $filePath );
-    $this->_log( "basedir:", $basedir );
-    $this->_log( "filepath:", $filePath );
+
     if ( !$this->_isChild( $basedir, $filePath ) ) {
       throw new HttpException( 404 );
     }
@@ -89,12 +124,12 @@ class Editor_EditController extends BaseController
 
 
   private function _file_put_contents_atomic( $filename, $content ) {
-    $this->_log( "atomic put:", $filename );
+    
     $temp = tempnam( FILE_PUT_CONTENTS_ATOMIC_TEMP, 'temp' );
     if ( !( $f = @fopen( $temp, 'wb' ) ) ) {
 
       $temp = FILE_PUT_CONTENTS_ATOMIC_TEMP . DIRECTORY_SEPARATOR . uniqid( 'temp' );
-      $this->log( $temp );
+
       if ( !( $f = @fopen( $temp, 'wb' ) ) ) {
         trigger_error( "file_put_contents_atomic() : error writing temporary file '$temp'", E_USER_WARNING );
         return false;

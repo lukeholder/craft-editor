@@ -25,7 +25,7 @@ improve.
 After installation you can simply place this in your twig template.
 
 ```
-{% if user.admin %}
+{% if user and user.admin %}
 <a href="{{ craft.editor.templateLink }}">Edit this Template</a>
 {% endif %}
 ```
