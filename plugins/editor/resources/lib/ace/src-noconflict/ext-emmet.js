@@ -47,7 +47,9 @@ AceEmmetEditor.prototype = {
     setupContext: function(editor) {
         this.ace = editor;
         this.indentation = editor.session.getTabString();
-        emmet.require('resources').setVariable('indentation', this.indentation);
+        if (!emmet)
+            emmet = window.emmet;
+        emmet.require("resources").setVariable("indentation", this.indentation);
         this.$syntax = null;
         this.$syntax = this.getSyntax();
     },
@@ -88,14 +90,14 @@ AceEmmetEditor.prototype = {
     },
     replaceContent: function(value, start, end, noIndent) {
         if (end == null)
-            end = start == null ? content.length : start;
+            end = start == null ? this.getContent().length : start;
         if (start == null)
             start = 0;
-        var utils = emmet.require('utils');
+        var utils = emmet.require("utils");
         if (!noIndent) {
             value = utils.padString(value, utils.getLinePaddingFromPosition(this.getContent(), start));
         }
-        var tabstopData = emmet.require('tabStops').extract(value, {
+        var tabstopData = emmet.require("tabStops").extract(value, {
             escape: function(ch) {
                 return ch;
             }
@@ -131,7 +133,7 @@ AceEmmetEditor.prototype = {
         if (this.$syntax)
             return this.$syntax;
         var syntax = this.ace.session.$modeId.split("/").pop();
-        if (syntax == 'html' || syntax == "php") {
+        if (syntax == "html" || syntax == "php") {
             var cursor = this.ace.getCursorPosition();
             var state = this.ace.session.getState(cursor.row);
             if (typeof state != "string")
@@ -141,24 +143,24 @@ AceEmmetEditor.prototype = {
                 if (state.length > 1)
                     syntax = state[0];
                 else if (syntax == "php")
-                    syntax = "html"
+                    syntax = "html";
             }
         }
         return syntax;
     },
     getProfileName: function() {
         switch(this.getSyntax()) {
-          case 'css': return css;
-          case 'xml':
-          case 'xsl':
-            return 'xml';
-          case 'html':
-            var profile = emmet.require('resources').getVariable('profile');
+          case "css": return "css";
+          case "xml":
+          case "xsl":
+            return "xml";
+          case "html":
+            var profile = emmet.require("resources").getVariable("profile");
             if (!profile)
-                profile = this.ace.session.getLines(0,2).join("").search(/<!DOCTYPE[^>]+XHTML/i) != -1 ? 'xhtml': 'html';
+                profile = this.ace.session.getLines(0,2).join("").search(/<!DOCTYPE[^>]+XHTML/i) != -1 ? "xhtml": "html";
             return profile;
         }
-        return 'xhtml';
+        return "xhtml";
     },
     prompt: function(title) {
         return prompt(title);
@@ -167,7 +169,7 @@ AceEmmetEditor.prototype = {
         return this.ace.session.getTextRange();
     },
     getFilePath: function() {
-        return '';
+        return "";
     }
 };
 
@@ -179,7 +181,7 @@ var keymap = {
     matching_pair: {"mac": "ctrl+alt+j", "win": "alt+j"},
     next_edit_point: "alt+right",
     prev_edit_point: "alt+left",
-    toggle_comment: {"mac": "command+shift+/", "win": "ctrl+shift+/"},
+    toggle_comment: {"mac": "command+/", "win": "ctrl+/"},
     split_join_tag: {"mac": "shift+command+'", "win": "shift+ctrl+`"},
     remove_tag: {"mac": "command+'", "win": "shift+ctrl+;"},
     evaluate_math_expression: {"mac": "shift+command+y", "win": "shift+ctrl+y"},
@@ -194,30 +196,45 @@ var keymap = {
     reflect_css_value: {"mac": "shift+command+r", "win": "shift+ctrl+r"},
 
     encode_decode_data_url: {"mac": "shift+ctrl+d", "win": "ctrl+'"},
-    expand_abbreviation_with_tab: "Tab"
+    expand_abbreviation_with_tab: "Tab",
+    wrap_with_abbreviation: {"mac": "shift+ctrl+a", "win": "shift+ctrl+a"}
 };
 
 var editorProxy = new AceEmmetEditor();
 exports.commands = new HashHandler();
-function runEmmetCommand(editor) {
+exports.runEmmetCommand = function(editor) {
     editorProxy.setupContext(editor);
     if (editorProxy.getSyntax() == "php")
         return false;
-    var actions = emmet.require('actions')
+    var actions = emmet.require("actions");
 
+    if (this.action == "expand_abbreviation_with_tab") {
+        if (!editor.selection.isEmpty())
+            return false;
+    }
+    
+    if (this.action == "wrap_with_abbreviation") {
+        return setTimeout(function() {
+            actions.run("wrap_with_abbreviation", editorProxy);
+        }, 0);
+    }
+    
     try {
-        var result = actions.run(this.name, editorProxy);
+        var result = actions.run(this.action, editorProxy);
     } catch(e) {
         editor._signal("changeStatus", typeof e == "string" ? e : e.message);
+        console.log(e);
     }
     return result;
-}
+};
 
 for (var command in keymap) {
     exports.commands.addCommand({
-        name: command,
+        name: "emmet:" + command,
+        action: command,
         bindKey: keymap[command],
-        exec: runEmmetCommand
+        exec: exports.runEmmetCommand,
+        multiSelectAction: "forEach"
     });
 }
 
@@ -236,7 +253,7 @@ var onChangeMode = function(e, target) {
 };
 
 
-exports.AceEmmetEditor = AceEmmetEditor
+exports.AceEmmetEditor = AceEmmetEditor;
 require("ace/config").defineOptions(Editor.prototype, "editor", {
     enableEmmet: {
         set: function(val) {

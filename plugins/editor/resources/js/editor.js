@@ -71,7 +71,7 @@ saveFile = function () {
 var editor = ace.edit("editor");
 editor.setTheme("ace/theme/monokai");
 editor.setFontSize(14);
-editor.getSession().setMode("ace/mode/javascript");
+editor.getSession().setMode("ace/mode/twig");
 
 editor.getSession().on('change', function () {
   editor.getSession().dirty = true;

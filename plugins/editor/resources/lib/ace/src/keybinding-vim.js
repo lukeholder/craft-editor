@@ -58,6 +58,7 @@ var startCommands = {
 };
 
 exports.handler = {
+	$id: "ace/keyboard/vim",
     handleMacRepeat: function(data, hashId, key) {
         if (hashId == -1) {
             data.inputChar = key;
@@ -78,11 +79,23 @@ exports.handler = {
     handleKeyboard: function(data, hashId, key, keyCode, e) {
         if (hashId != 0 && (key == "" || key == "\x00"))
             return null;
-
+        
+        var editor = data.editor;
+        
         if (hashId == 1)
             key = "ctrl-" + key;
-        
-        if ((key == "esc" && hashId == 0) || key == "ctrl-[") {
+        if (key == "ctrl-c") {
+            if (!useragent.isMac && editor.getCopyText()) {
+                editor.once("copy", function() {
+                    if (data.state == "start")
+                        coreCommands.stop.exec(editor);
+                    else
+                        editor.selection.clearSelection();
+                });
+                return {command: "null", passEvent: true};
+            }
+            return {command: coreCommands.stop};            
+        } else if ((key == "esc" && hashId == 0) || key == "ctrl-[") {
             return {command: coreCommands.stop};
         } else if (data.state == "start") {
             if (useragent.isMac && this.handleMacRepeat(data, hashId, key)) {
@@ -93,13 +106,8 @@ exports.handler = {
             if (hashId == -1 || hashId == 1 || hashId == 0 && key.length > 1) {
                 if (cmds.inputBuffer.idle && startCommands[key])
                     return startCommands[key];
-                return {
-                    command: {
-                        exec: function(editor) { 
-                            return cmds.inputBuffer.push(editor, key);
-                        }
-                    }
-                };
+                cmds.inputBuffer.push(editor, key);
+                return {command: "null", passEvent: false}; 
             } // if no modifier || shift: wait for input.
             else if (key.length == 1 && (hashId == 0 || hashId == 4)) {
                 return {command: "null", passEvent: true};
@@ -1467,7 +1475,7 @@ module.exports = {
 };
 
 module.exports.backspace = module.exports.left = module.exports.h;
-module.exports.space = module.exports.return = module.exports.right = module.exports.l;
+module.exports.space = module.exports['return'] = module.exports.right = module.exports.l;
 module.exports.up = module.exports.k;
 module.exports.down = module.exports.j;
 module.exports.pagedown = module.exports["ctrl-d"];
