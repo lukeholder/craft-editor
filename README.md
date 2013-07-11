@@ -16,7 +16,7 @@ improve.
 * Binding of Command+S to save the file.
 * Atomic file replacement when saving.
 * Twig tag to link directly from you front end website to the editor
-
+* Twig syntax highlighting!
 
 # Usage
 
