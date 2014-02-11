@@ -10,18 +10,17 @@ use Symfony\Component\Filesystem\Filesystem;
 define( "FILE_PUT_CONTENTS_ATOMIC_TEMP", dirname( __FILE__ ) . "/../cache" );
 define( "FILE_PUT_CONTENTS_ATOMIC_MODE", 0777 );
 
-
 Craft::requirePackage( CraftPackage::Users );
 
 class Editor_EditController extends BaseController
 {
   protected $allowAnonymous = true;
 
-  public function actionTemplates() {
-
+  public function actionTemplates()
+  {
     $this->requireLogin();
     $this->requireAdmin();
-    
+
     $file_path = $this->cleanPath( craft()->request->getQuery( "f", "error" ) );
 
     $vars = array(
@@ -33,22 +32,24 @@ class Editor_EditController extends BaseController
 
   }
 
-  public function actionBackupTemplates() {
+  public function actionBackupTemplates()
+  {
     $this->requireLogin();
     $this->requireAjaxRequest();
     $this->requireAdmin();
-    
+
     $fs = new Filesystem();
     $zippy = Zippy::load();
 
     $templateBackupsDir = CRAFT_STORAGE_PATH.'templatesBackups/';
-    if(!$fs->exists($templateBackupsDir )){
+    if (!$fs->exists($templateBackupsDir )) {
       $fs->mkdir($templateBackupsDir);
     };
 
-      try{
-        
-        $archive = $zippy->create($templateBackupsDir.'templateBackup-'.uniqid().'.zip', array(
+      try {
+
+        $filename = $templateBackupsDir.'templateBackup-'.uniqid().'.zip';
+        $archive = $zippy->create($filename, array(
             'folder' => CRAFT_TEMPLATES_PATH
         ), true);
 
@@ -57,21 +58,20 @@ class Editor_EditController extends BaseController
         );
 
         $this->returnJson( $vars );
-      }catch(Exception $e){
+      } catch (Exception $e) {
         $this->returnErrorJson( $e );
       }
 
-
   }
 
-  public function actionSaveTemplate() {
+  public function actionSaveTemplate()
+  {
     $this->requireLogin();
     $this->requireAjaxRequest();
     $this->requireAdmin();
 
     $contents  = craft()->request->getRequiredPost( "contents" );
     $file_path = craft()->request->getRequiredPost( "file_path" );
-
 
     if ( $this->_file_put_contents_atomic( $file_path, utf8_encode( $contents ) ) ) {
 
@@ -92,10 +92,10 @@ class Editor_EditController extends BaseController
 
   }
 
-  private function cleanPath( $filePath ) {
-
+  private function cleanPath($filePath)
+  {
     $extension = substr( $filePath, -4, 4 );
-    if ( $extension != "html" ) {
+    if ($extension != "html") {
       throw new HttpException( 404 );
     }
 
@@ -110,7 +110,8 @@ class Editor_EditController extends BaseController
 
   }
 
-  private function _isChild( $parent, $child ) {
+  private function _isChild($parent, $child)
+  {
     if ( false !== ( $parent = realpath( $parent ) ) ) {
       $parent = str_replace( '\\', '/', $parent );
       if ( false !== ( $child = realpath( $child ) ) ) {
@@ -119,12 +120,12 @@ class Editor_EditController extends BaseController
           return true;
       }
     }
+
     return false;
   }
 
-
-  private function _file_put_contents_atomic( $filename, $content ) {
-    
+  private function _file_put_contents_atomic($filename, $content)
+  {
     $temp = tempnam( FILE_PUT_CONTENTS_ATOMIC_TEMP, 'temp' );
     if ( !( $f = @fopen( $temp, 'wb' ) ) ) {
 
@@ -132,6 +133,7 @@ class Editor_EditController extends BaseController
 
       if ( !( $f = @fopen( $temp, 'wb' ) ) ) {
         trigger_error( "file_put_contents_atomic() : error writing temporary file '$temp'", E_USER_WARNING );
+
         return false;
       }
     }
@@ -150,7 +152,8 @@ class Editor_EditController extends BaseController
 
   }
 
-  private function _log( $message, $params = array() ) {
+  private function _log( $message, $params = array() )
+  {
     if ( ( $lumberJack = craft()->plugins->getPlugin( 'LumberJack' ) ) && $lumberJack->isInstalled && $lumberJack->isEnabled ) {
 
       craft()->lumberJack->log( array(

@@ -7,30 +7,32 @@ namespace Craft;
  */
 class EditorVariable
 {
-    public function templateLink(){
-      if (isset($_GET['template']))
-      {
-          $template = $_GET['template'];
-          $templatePath = craft()->templates->findTemplate($template);
-          $templatesFolder = craft()->path->getTemplatesPath();
+    public function templateLink($obj)
+    {
 
-          $siteUrl = craft::getSiteUrl();
-          $actionUrl = craft()->config->get("actionTrigger");
+            $template = $obj->getTemplateName();
+            $templatePath = craft()->templates->findTemplate($template);
+            $templatesFolder = craft()->path->getTemplatesPath();
 
-          if (strncmp($templatePath, $templatesFolder, strlen($templatesFolder)) == 0)
-          {
+            $siteUrl = craft::getSiteUrl();
+            $actionUrl = craft()->config->get("actionTrigger");
+
+          if (strncmp($templatePath, $templatesFolder, strlen($templatesFolder)) == 0) {
               $relTemplatesPath = substr($templatePath, strlen($templatesFolder), strlen($templatePath));
-              return $siteUrl."/".$actionUrl."/editor/edit/templates?f=".$relTemplatesPath;
+
+              return $siteUrl.$actionUrl."/editor/edit/templates?f=".$relTemplatesPath;
 
           }
-      }
+
     }
 
-    public function tree (){
+    public function tree()
+    {
       return json_encode($this->makeTree(craft()->path->getTemplatesPath()));
     }
 
-    private function makeTree ($dir, $prefix = ''){
+    private function makeTree($dir, $prefix = '')
+    {
       $dir = rtrim($dir, '\\/');
       $siteUrl = craft::getSiteUrl();
       $actionUrl = craft()->config->get("actionTrigger");
@@ -39,12 +41,13 @@ class EditorVariable
       foreach (scandir($dir) as $f) {
         if ($f !== '.' and $f !== '..' and $f !== '.DS_Store') {
           if (is_dir("$dir/$f")) {
-            $result[] = array("label"=>$f, 'children' => $this->makeTree("$dir/$f", "$prefix$f/")); 
+            $result[] = array("label"=>$f, 'children' => $this->makeTree("$dir/$f", "$prefix$f/"));
           } else {
             $result[] = array("label"=>"<a href='$siteUrl/$actionUrl/editor/edit/templates?f=$prefix$f'>$f</a>");
           }
         }
       }
+
       return $result;
     }
 }

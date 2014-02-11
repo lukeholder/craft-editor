@@ -38,7 +38,7 @@ var SqlHighlightRules = require("./sql_highlight_rules").SqlHighlightRules;
 var Range = require("../range").Range;
 
 var Mode = function() {
-    this.$tokenizer = new Tokenizer(new SqlHighlightRules().getRules());
+    this.HighlightRules = SqlHighlightRules;
 };
 oop.inherits(Mode, TextMode);
 
@@ -46,6 +46,7 @@ oop.inherits(Mode, TextMode);
 
     this.lineCommentStart = "--";
 
+    this.$id = "ace/mode/sql";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
