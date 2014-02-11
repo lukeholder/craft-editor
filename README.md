@@ -25,18 +25,19 @@ improve.
 
 # Usage
 
-After installation you can simply place this in your twig template.
+After installation you can simply place this in your twig templates:
 
 ```
 {% if user and user.admin %}
-<a href="{{ craft.editor.templateLink }}">Edit this Template</a>
+<a href="{{ craft.editor.templateLink(_self) }}">Edit this Template</a>
 {% endif %}
 ```
-Suggest placing this in your _layout.html template if you have one.
+You need to place the above in the actual files you wish to have a link to.
+If you only place the above link in the layout you will only get a link to
+your layout.
 
 # Coming Soon
 
-* Auto backup of your templates
 * Template versioning.
 * Push template to production site
 * Tabbed editor
