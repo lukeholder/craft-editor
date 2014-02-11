@@ -2,8 +2,6 @@
 
 namespace Craft;
 
-
-
 class EditorPlugin extends BasePlugin
 {
     public function getName()
@@ -13,7 +11,7 @@ class EditorPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '1.0';
+        return '1.1';
     }
 
     public function getDeveloper()
