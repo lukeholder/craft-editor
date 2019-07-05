@@ -1,3 +1,17 @@
+# Not maintained. Repo Archived.
+
+Please looks for alternatives. 
+
+
+
+
+
+
+
+
+
+
+
 # Template Editor for Craft CMS (Alpha)
 
 Editor is a web based template editor for craft CMS.
